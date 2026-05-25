@@ -86,22 +86,3 @@ Spec-driven:      강함 (Chronicle 위키)
           이동 능력 (한 길 5~10년 고정 X)
           확신 없이도 움직이는 것 — 동아리 운영에서 이미 검증된 패턴
 ```
-
-## 다음 계획
-
-```yaml
-Phase A (지금 ~ 6월 말):
-  - 혼공파 + 혼공SQL 완주
-  - 크로니클 위키 작업
-  - 채용 활동 (스마게 31일, 파이드픽셀즈 곧)
-  
-Phase B (7월 초 ~ 8월 초):
-  - Playwright 입문
-  - C# 교과서 + Unity 어휘
-  - SQL 마무리
-  
-Phase C (8월 중 ~ 9월):
-  - Playwright 프로젝트
-  - Chronicle Phase 1 진입 (Claude Code 활용)
-  - 자동화 QA 공고 본격 지원
-```
