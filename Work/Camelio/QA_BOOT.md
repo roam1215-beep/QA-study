@@ -22,9 +22,8 @@
 5. Monday **스프린트 보드**를 LIVE 조회해 현재 Sprint Scope / 일정 / 상·하위 일감을 확인한다.
 6. Monday **QA / 버그 보드**를 LIVE 조회해 현재 BTS 상태와 요청 기능의 관련 이력을 확인한다.
 7. Google Drive의 **현재 QA Test Spreadsheet**를 LIVE 조회해 기존 TC / BVT / Sprint Test 상태를 확인한다.
-8. 기존 기능의 QA/회귀 작업이면 `Work/Camelio/TestAssets/`에서 관련 Test Asset이 있는지 확인한다.
-9. 기능 리뷰가 필요하면 현재 Sprint 일감의 연결을 따라 Monday **기획서 보드**의 최신 기획 Asset을 특정한다.
-10. 실제 Source를 읽은 뒤에만 Review / Risk / QUESTION / Coverage / TC 작업을 시작한다.
+8. 기능 리뷰가 필요하면 현재 Sprint 일감의 연결을 따라 Monday **기획서 보드**의 최신 기획 Asset을 특정한다.
+9. 실제 Source를 읽은 뒤에만 Review / Risk / QUESTION / Coverage / TC 작업을 시작한다.
 
 과거 대화와 모델 기억은 참고만 한다. LIVE Source 또는 Git의 명시 규칙과 충돌하면 사용하지 않는다.
 
@@ -44,17 +43,10 @@
 - Board ID: `18427010413`
 - 웹 BTS는 사람용 View다. QA 판단용 데이터는 Monday 원본을 우선한다.
 
-### Git Test Assets
-- Path: `Work/Camelio/TestAssets/`
-- 역할: 기능별 **검증 이력 / Coverage / Gap / HOLD / Regression / 다음 QA Focus**를 세션을 넘어 유지한다.
-- 기획서나 Test Case를 복제하지 않는다.
-- Test Asset 자체는 새로운 Expected의 근거가 아니다. Expected는 최신 기획/확정 답변/QA Owner 판단으로 다시 확인한다.
-
-### Test Case / Execution Docs
+### Test Assets
 - Google Drive / Google Sheets
 - 정확한 현재 Spreadsheet는 `QA_ACTIVE.md`의 ID를 사용한다.
 - 파일명이 비슷하다는 이유로 다른 Spreadsheet를 임의 선택하지 않는다.
-- 실행 가능한 상세 TC / BVT / Sprint Test의 정본은 이쪽이다.
 
 ## 3. Source Resolution Contract
 
@@ -101,7 +93,7 @@ Expected 근거로 사용할 수 있는 것:
 단독으로 Expected 근거가 될 수 없는 것:
 - 현재 구현 상태
 - BTS Actual
-- 기존 TC / Test Asset
+- 기존 TC
 - 일반적인 게임 UX
 - ChatGPT 기억
 - AI 추론
@@ -115,8 +107,7 @@ BTS History는 Risk/Regression 근거로는 사용할 수 있지만 새로운 �
 중요한 QA 작업 전 최소 확인:
 - Monday Sprint: 현재 Sprint/일감 조회 성공
 - BTS: 요청 Issue 또는 관련 Issue 조회 성공
-- Test Case: 현재 Spreadsheet 조회 성공
-- 기존 기능 작업 시: 관련 Git Test Asset 확인
+- Test Asset: 현재 Spreadsheet 조회 성공
 - Design Review 시: 정확한 기획 Asset 특정 + 필요한 내용 Read 성공
 
 조회하지 못한 Source를 LIVE라고 주장하지 않는다.
@@ -130,8 +121,7 @@ CAMELIO QA BOOT
 Sprint: <current> / LIVE CHECK
 Monday Scope: PASS|FAIL
 BTS: PASS|FAIL
-QA Test Case: PASS|FAIL
-Test Asset: PASS|N/A
+QA Test Asset: PASS|FAIL
 Design Source: 필요 시 조회
 Blocked: <none or reason>
 ```
@@ -140,10 +130,7 @@ Handshake 자체가 목적이 아니다. PASS 후 바로 실제 QA 업무로 이
 
 ## 9. Git Scope
 
-Git에는 다음을 유지한다.
-- 부팅 규칙 / 현재 QA 운영 기준 / 현재 Sprint 및 Live Source Pointer
-- 기능별 Test Asset: 검증된 Coverage, Gap/HOLD, Regression, 다음 QA Focus
-- 업무에서 반복적으로 유효성이 확인된 QA 지식
+Git에는 부팅 규칙, 현재 QA 운영 기준, 현재 Sprint/Live Source Pointer만 우선 유지한다.
 
 Git에 넣지 않는다:
 - Monday 전체 Dump
