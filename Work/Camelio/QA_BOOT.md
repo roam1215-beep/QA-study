@@ -55,12 +55,26 @@ Core Boot 단계에서 모든 Feature / BTS / TC / 기획 내용을 미리 로�
 
 관련 Source가 존재하면 현재 업무 범위에 필요한 Source를 먼저 LIVE 조회한다.
 
-주요 Source:
-- Monday Sprint / Feature / Parent / QA Item 및 관련 Update
+### Default Live Sources
+
+현재 상태 / 이력 / Coverage Context를 판단할 때 기본적으로 먼저 확인한다.
+
+- Monday Sprint / Feature / Parent / QA Item 및 관련 Update / Reply
 - Monday 기획서 Item과 최신 Design Asset
 - Monday QA / 버그 보드의 관련 BTS
-- Google Drive의 현재 Test Case / BVT / Sprint Test
 - Git Test Asset의 기존 Coverage / Open / Recheck Context
+
+### On-demand Test Sources
+
+Google Drive의 Test Case / BVT / Sprint Test는 기본 Boot나
+일반 상태 조회에서 자동으로 읽지 않는다.
+
+다음 경우에만 조회한다.
+
+- QA Owner가 TC / BVT / Sprint Test 조회를 요청한 경우
+- TC 작성 / 수정 / Coverage 비교가 현재 작업의 목적일 경우
+- 실행 가능한 Test Asset 상태가 현재 판단에 필요한 경우
+- Default Live Sources만으로 필요한 Coverage를 판단할 수 없는 경우
 
 Git Test Asset과 모델 기억은 현재 사실을 대신하지 않는다.
 둘의 역할은 필요한 Live Source와 과거 QA Context를 빠르게 찾는 것이다.
@@ -86,12 +100,12 @@ HOLD / QUESTION / REVIEW_BLOCKED 등으로 구분한다.
 
 1. Git Test Asset Index에서 관련 Feature Asset 존재 여부 확인
 2. 관련 Monday Sprint / Feature / Parent / QA Item 확인
-3. QA Item의 Update / 답변 / 관련 이력 확인
+3. QA Item의 Update / Reply / 관련 작업 이력 확인
 4. 연결된 Monday 기획서 Item 확인
 5. 해당 기획 Item의 최신 Design Asset 확인
 6. 알려진 Issue ID 및 현재 Feature 관련 BTS 조회
-7. Google Drive의 관련 Test Case / BVT / Sprint Test 확인
-8. Git Test Asset의 Coverage / Open / Recheck와 결합
+7. Git Test Asset의 Coverage / Open / Recheck Context와 결합
+8. 현재 요청이 TC / BVT / Sprint Test를 필요로 할 때만 Google Drive 조회
 9. 그 결과를 기준으로 Review / Risk / QUESTION / Coverage / TC 작업 수행
 
 모든 Source를 항상 전부 읽는 것이 목적은 아니다.
@@ -100,7 +114,27 @@ HOLD / QUESTION / REVIEW_BLOCKED 등으로 구분한다.
 업무와 무관한 Context를 불필요하게 로드하지 않는 것을 원칙으로 한다.
 
 
-## 4. Name / Scope Resolution Rule
+## 4. Progressive Retrieval Rule
+
+Live Retrieval은 가장 좁고 신뢰도 높은 Pointer부터 시작한다.
+
+1. Last-known ID / 정확한 Pointer
+2. Git Test Asset의 Semantic Anchor / Alias / 관계
+3. Parent / Subitem / Linked Item 탐색
+4. 제한된 Board / Source Search
+5. 광역 검색
+
+앞 단계에서 현재 판단에 충분한 근거가 확보되면
+불필요한 Source를 추가로 로드하지 않는다.
+
+광역 검색과 문서 전체 Read는 기본 동작이 아니다.
+Pointer 실패, Scope 불명확, Expected 검증 등 필요한 경우에만 수행한다.
+
+Last-known Pointer는 빠른 접근을 위한 Cache로 사용한다.
+Pointer가 유효하지 않거나 Source가 이동 / 교체된 경우
+Semantic Anchor와 관계 정보를 이용해 현재 Source를 다시 Resolve한다.
+
+## 5. Name / Scope Resolution Rule
 
 Feature / Item / Design / BTS / Test Asset을 찾을 때
 사용자가 원본 시스템의 정확한 명칭을 입력해야 한다고 가정하지 않는다.
@@ -131,7 +165,7 @@ Feature / Item / Design / BTS / Test Asset을 찾을 때
 후보를 찾은 것과 요청 대상을 확정한 것을 구분한다.
 
 
-## 5. Stable Sources
+## 6. Stable Sources
 
 ### Sprint / Work
 - Monday Board: `스프린트`
@@ -180,18 +214,20 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 파일명이 비슷하다는 이유로 다른 Spreadsheet를 임의 선택하지 않는다.
 
 
-## 6. Source Resolution Contract
+## 7. Source Resolution Contract
 
 1. `QA_ACTIVE.md`에 명시된 ID / Pointer가 있으면 우선 사용한다.
-2. 정확한 Pointer가 있는 Source를 이름 검색 결과로 임의 대체하지 않는다.
-3. Current Sprint / 업무 상태는 Monday LIVE 데이터를 확인한다.
-4. 기능 기획은 연결된 Monday 기획서 Item과 최신 Asset을 우선한다.
-5. 전역 검색에서 찾은 비슷한 문서를 자동으로 Primary Source로 사용하지 않는다.
-6. 최신 Source가 둘 이상이거나 연결이 불명확하면 임의 선택하지 않는다.
-7. Source를 찾은 것과 실제 내용을 읽은 것을 구분한다.
+2. Feature Asset의 Last-known Pointer가 유효하면 Fast Path로 사용한다.
+3. Last-known Pointer가 무효이거나 Source가 이동 / 교체된 경우 Semantic Anchor / Alias / 관계로 다시 Resolve한다.
+4. 정확한 Pointer가 있는 Source를 이름 검색 결과로 임의 대체하지 않는다.
+5. Current Sprint / 업무 상태는 Monday LIVE 데이터를 확인한다.
+6. 기능 기획은 연결된 Monday 기획서 Item과 최신 Asset을 우선한다.
+7. 전역 검색에서 찾은 비슷한 문서를 자동으로 Primary Source로 사용하지 않는다.
+8. 최신 Source가 둘 이상이거나 연결이 불명확하면 임의 선택하지 않는다.
+9. Source를 찾은 것과 실제 내용을 읽은 것을 구분한다.
 
 
-## 7. Source Read State
+## 8. Source Read State
 
 - `LOCATED` — Source / 파일 위치만 확인
 - `FILE_READ` — 실제 파일 접근 성공
@@ -203,7 +239,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 `LOCATED` 또는 `FILE_READ`를 `CONTENT_READ`로 표현하지 않는다.
 
 
-## 8. Document Reading Gate
+## 9. Document Reading Gate
 
 기획 Asset 사용 전에 포맷 / 구조를 확인한다.
 
@@ -219,7 +255,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 신뢰성 있게 읽을 수 없으면 `REVIEW_BLOCKED`로 표시한다.
 
 
-## 9. Evidence / Expected Gate
+## 10. Evidence / Expected Gate
 
 Expected 근거로 사용할 수 있는 것:
 
@@ -243,7 +279,7 @@ BTS History와 Test Asset은 Risk / Regression / 과거 Coverage 근거로는 �
 새로운 게임 사양을 만드는 근거로 사용하지 않는다.
 
 
-## 10. Stop Rule
+## 11. Stop Rule
 
 조회하지 못한 Source를 LIVE라고 주장하지 않는다.
 
@@ -253,7 +289,7 @@ BTS History와 Test Asset은 Risk / Regression / 과거 Coverage 근거로는 �
 추측으로 계속 진행하지 않고 STOP → HOLD / QUESTION / REVIEW_BLOCKED 처리한다.
 
 
-## 11. Git Scope
+## 12. Git Scope
 
 Git에는 다음을 유지한다.
 
