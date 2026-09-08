@@ -100,7 +100,38 @@ HOLD / QUESTION / REVIEW_BLOCKED 등으로 구분한다.
 업무와 무관한 Context를 불필요하게 로드하지 않는 것을 원칙으로 한다.
 
 
-## 4. Stable Sources
+## 4. Name / Scope Resolution Rule
+
+Feature / Item / Design / BTS / Test Asset을 찾을 때
+사용자가 원본 시스템의 정확한 명칭을 입력해야 한다고 가정하지 않는다.
+
+검색 단계에서는 다음 차이를 허용해 관련 후보를 넓게 찾는다.
+
+- 약칭 / 통칭
+- 접두사 / 분류명
+- 띄어쓰기 차이
+- 괄호 및 기호 차이
+- 유사한 기능명
+- Git Test Asset에 등록된 Alias
+- Monday의 Parent / Subitem / 연결 관계
+
+예:
+`로비` → `메인 로비`, `[메인화면] 로비` 등도 검색 후보로 포함한다.
+
+단, 검색 후보가 여러 개이고 현재 요청의 Scope를 하나로 확정할 근거가 부족하면
+이름 유사도, 최신 항목, Sprint 위치 등을 근거로 임의 선택하지 않는다.
+
+가능한 후보와 차이를 짧게 제시하고 QA Owner에게 Scope를 확인한다.
+
+즉:
+- Retrieval은 유연하게 한다.
+- Resolution은 근거가 있을 때만 확정한다.
+- Ambiguous하면 QUESTION 후 진행한다.
+
+후보를 찾은 것과 요청 대상을 확정한 것을 구분한다.
+
+
+## 5. Stable Sources
 
 ### Sprint / Work
 - Monday Board: `스프린트`
@@ -149,7 +180,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 파일명이 비슷하다는 이유로 다른 Spreadsheet를 임의 선택하지 않는다.
 
 
-## 5. Source Resolution Contract
+## 6. Source Resolution Contract
 
 1. `QA_ACTIVE.md`에 명시된 ID / Pointer가 있으면 우선 사용한다.
 2. 정확한 Pointer가 있는 Source를 이름 검색 결과로 임의 대체하지 않는다.
@@ -160,7 +191,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 7. Source를 찾은 것과 실제 내용을 읽은 것을 구분한다.
 
 
-## 6. Source Read State
+## 7. Source Read State
 
 - `LOCATED` — Source / 파일 위치만 확인
 - `FILE_READ` — 실제 파일 접근 성공
@@ -172,7 +203,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 `LOCATED` 또는 `FILE_READ`를 `CONTENT_READ`로 표현하지 않는다.
 
 
-## 7. Document Reading Gate
+## 8. Document Reading Gate
 
 기획 Asset 사용 전에 포맷 / 구조를 확인한다.
 
@@ -188,7 +219,7 @@ Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
 신뢰성 있게 읽을 수 없으면 `REVIEW_BLOCKED`로 표시한다.
 
 
-## 8. Evidence / Expected Gate
+## 9. Evidence / Expected Gate
 
 Expected 근거로 사용할 수 있는 것:
 
@@ -212,7 +243,7 @@ BTS History와 Test Asset은 Risk / Regression / 과거 Coverage 근거로는 �
 새로운 게임 사양을 만드는 근거로 사용하지 않는다.
 
 
-## 9. Stop Rule
+## 10. Stop Rule
 
 조회하지 못한 Source를 LIVE라고 주장하지 않는다.
 
@@ -222,7 +253,7 @@ BTS History와 Test Asset은 Risk / Regression / 과거 Coverage 근거로는 �
 추측으로 계속 진행하지 않고 STOP → HOLD / QUESTION / REVIEW_BLOCKED 처리한다.
 
 
-## 10. Git Scope
+## 11. Git Scope
 
 Git에는 다음을 유지한다.
 
