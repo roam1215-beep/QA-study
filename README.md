@@ -8,17 +8,16 @@
 1. **Work** — 실제 QA 업무를 안정적으로 수행하기 위한 운영 기준과 부팅 정보
 2. **Study** — 업무에서 드러난 QA/기술 역량의 약점을 학습하고 다시 업무에 환류하는 공간
 
-Git을 Monday/기획서/BTS/TC의 복제 저장소로 만들지 않는다. 최신 사실은 원본 시스템에서 다시 읽고, Git에는 **AI가 무엇을 어디서 어떻게 읽어야 하는지**, **검증된 QA 운영 기준**, **다음 QA에 재사용할 Coverage 지식**을 남긴다.
+Git을 Monday/기획서/BTS/TC의 복제 저장소로 만들지 않는다. 최신 사실은 원본 시스템에서 다시 읽고, Git에는 **AI가 무엇을 어디서 어떻게 읽어야 하는지**와 **검증된 QA 운영 기준**만 남긴다.
 
 ## Repository Map
 
 ```text
 Work/
 └─ Camelio/
-   ├─ QA_BOOT.md       # 새 세션 부팅 / Source 접근 / 안전 규칙
-   ├─ QA_CURRENT.md    # 현재 QA 리뷰·Coverage·TC 기준
-   ├─ QA_ACTIVE.md     # 현재 Sprint와 Live Source Pointer
-   └─ TestAssets/      # 기능별 Coverage / Gap / Regression / 다음 QA Focus
+   ├─ QA_BOOT.md      # 새 세션 부팅 / Source 접근 / 안전 규칙
+   ├─ QA_CURRENT.md   # 현재 QA 리뷰·Coverage·TC 기준
+   └─ QA_ACTIVE.md    # 현재 Sprint와 Live Source Pointer
 
 Tracker/             # 일별 활동 로그
 Diary/               # 회고
@@ -32,9 +31,8 @@ capability/          # 현재 역량 / 채용 자료
 
 - **Source first** — 최신 업무 사실은 Monday / 기획 Source / Google Drive 등 원본에서 확인한다.
 - **AI memory is convenience, not truth** — 대화/프로젝트 메모리는 편의를 위한 보조 수단이며, LIVE Source나 Git 정본과 충돌하면 버린다.
-- **Git is QA knowledge, not a mirror** — Sprint 일감, BTS 전체, TC 전체, 기획서 전체를 복제하지 않는다. 대신 다음 QA가 0부터 시작하지 않도록 필요한 Coverage 지식은 남긴다.
+- **Git is a boot layer, not a mirror** — Sprint 일감, BTS 전체, TC 전체, 기획서 전체를 Git에 복제하지 않는다.
 - **Evidence before Expected** — 원문 근거가 없는 Expected는 만들지 않는다. 필요하면 QUESTION/HOLD로 둔다.
-- **Test Asset ≠ Test Case** — Git Test Asset은 Coverage의 기억과 구조를 유지하고, 실행형 Test Case는 Google Drive 테스트 문서에서 관리한다.
 - **Work → Study → Work** — 실제 업무에서 반복적으로 드러난 약점을 공부하고, 다음 업무에서 개선 여부를 검증한다.
 - **과기록 금지** — 기록을 정리하느라 QA/학습 시간이 줄어들면 본말전도다.
 
@@ -46,7 +44,7 @@ capability/          # 현재 역량 / 채용 자료
 2. `Work/Camelio/QA_CURRENT.md`
 3. `Work/Camelio/QA_ACTIVE.md`
 
-그 다음 `QA_ACTIVE.md`가 가리키는 LIVE Source를 실제 조회한 뒤 업무를 시작한다. 기존 기능의 QA/회귀 작업이면 관련 `Work/Camelio/TestAssets/` 문서가 있는지도 확인한다.
+그 다음 `QA_ACTIVE.md`가 가리키는 LIVE Source를 실제 조회한 뒤 업무를 시작한다.
 
 **중요:** 까멜리오 프로젝트에서 Monday.com은 ChatGPT에게 절대 **READ-ONLY**다. 조회 외의 생성/수정/삭제/댓글/상태 변경 등 Write는 하지 않는다.
 
