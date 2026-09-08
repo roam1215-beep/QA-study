@@ -9,6 +9,7 @@
 - 원문에 없는 사양을 임의로 완성하지 않는다.
 - Expected가 결정되지 않으면 QUESTION 또는 HOLD로 분리한다.
 - 다른 모델은 기본 경유 단계가 아니다. 필요할 때 교차 검증/대량 비교 용도로만 사용한다.
+- AI/자동화/로그/QA Tool은 판단 비용을 줄이는 수단이다. **Scope / Expected / Coverage 종료 / 출시 판단의 Ownership은 QA Owner가 끝까지 가진다.**
 
 ## 2. Source 사용 기준
 - 기능 리뷰 시 현재 기능의 **주 기획서**와 실제 참고 문서를 먼저 특정한다.
@@ -114,14 +115,62 @@ BAD
 
 이유: 하나의 Expected에 여러 검증 포인트를 과도하게 적재한다.
 
-## 11. 변경 반영
+## 11. Recovery Mode / New Feature Mode
+
+### Recovery Mode
+과거 완료 QA의 Coverage를 복원·보완할 때:
+1. 기존 QA Update / 관련 BTS / 연결 QA의 Evidence를 먼저 읽는다.
+2. 최신 기획과 비교해 실제 Gap 후보만 뽑는다.
+3. 현재 빌드에서 필요한 것만 재검증한다.
+4. 결과를 `VERIFIED / ISSUE / QUESTION / HOLD / ASSET GAP`으로 분리한다.
+5. 다음 QA가 0부터 복원하지 않도록 Test Asset에 핵심만 남긴다.
+
+목표는 과거 QA를 다시 Full Test하는 것이 아니라 **실제 Coverage Hole을 닫는 것**이다.
+
+### New Feature Mode
+신규 기능은 사후 복원하지 않도록 처음부터:
+기획 리뷰 → Risk/Coverage → 필요한 Checklist/TC → 실행 → BTS → Test Asset Delta
+
+Recovery와 신규 QA를 같은 비용 구조로 운영하지 않는다.
+
+## 12. Test Asset / Test Case
+
+### Git Test Asset
+기능별 QA 작업 기억과 Coverage 구조를 유지한다.
+- 실제 확인한 핵심 Coverage
+- 미확인 영역과 사유
+- QUESTION / HOLD
+- Regression Focus
+- 다음 QA에서 우선 볼 항목
+- 필요한 Testability
+
+### Google Drive Test Case
+실제 반복 실행 가치가 있는 Action/Expected를 관리한다.
+- 핵심 Flow / State Transition
+- Boundary / Persistence
+- 수치 계산
+- 고위험 Interaction
+- Regression TC
+
+**Full TC 문서를 만드는 것이 목표가 아니다.**
+Test Asset 기준으로 전체 Coverage를 설명할 수 있고, 실행 가치가 있는 부분을 TC로 계속 보강해 **Full TC에 준하는 Coverage 통제력**을 유지하는 것이 목표다.
+
+## 13. 실용성 기준
+- 문서 무결성보다 다음 QA 비용 절감과 Coverage Hole 방지를 우선한다.
+- 단순 Checklist로 충분한 항목을 억지로 TC로 늘리지 않는다.
+- Test Asset은 완료 보고서나 BTS/기획서 복사본이 아니다.
+- 기록 유지 비용이 얻는 검증 가치보다 커지면 축소한다.
+- 새 BTS/기획 변경은 영향받는 Asset/TC만 Delta Update한다.
+- 소규모 개발 환경에서는 **완벽함보다 효과적이고 유지 가능한 체계**를 목표로 한다.
+
+## 14. 변경 반영
 - 기획 답변으로 일부 사양이 확정되면 영향받는 TC만 수정/추가/삭제한다.
 - 이미 확정된 TC 전체를 다시 생성하지 않는다.
 - 새 규칙은 한 기능에서 한 번 나온 피드백만으로 추가하지 않는다.
 - 서로 다른 기능에서 반복되거나 QA Owner가 명시적으로 일반화한 규칙만 CURRENT에 승격한다.
 - 이 문서는 짧게 유지한다. 기능별 사양, Q&A 역사, 개발 상태는 저장하지 않는다.
 
-## 12. 성장 체크
+## 15. 성장 체크
 - **Unsupported Expected** — Source 없는 Expected 생성. 목표 0.
 - **Owner Rewrite** — QA Owner가 산출물을 사실상 다시 써야 하는 정도. 감소해야 한다.
 - **Pre-Build Readiness** — 빌드 전에 Risk/질문/BVT/Sprint Test가 준비되는 정도. 증가해야 한다.
