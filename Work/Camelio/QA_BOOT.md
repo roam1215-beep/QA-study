@@ -1,323 +1,156 @@
 # CAMELIO QA BOOT
 
-> 목적: 새 ChatGPT 세션이 과거 대화를 기억하지 못해도
-> 정확한 Source를 다시 읽고 까멜리오 QA 업무를 연속적으로 재개하게 한다.
->
-> 이 문서는 게임 사양 저장소가 아니다.
+> 목적: 새 세션에서도 최소 Context로 까멜리오 QA 업무를 복구한다.
+> 이 문서는 게임 사양 저장소가 아니라 Source 접근/판단 규칙을 정의하는 Router다.
 
-## 0. CRITICAL SAFETY
+## 0. Critical Safety
 
 ### Monday.com = READ-ONLY
-
-까멜리오 프로젝트에서 ChatGPT는 Monday.com에 절대 Write하지 않는다.
-
-허용:
-Board / Group / Item / Subitem / 상태 / 일정 / 담당 /
-Comment / Update / Asset 조회와 첨부파일 Read.
-
-금지:
-Item 생성·수정·삭제, 상태/담당/일정/우선순위 변경,
-Comment/Update 작성, 파일 업로드·교체 등 모든 Monday 데이터 변경.
+허용: Board / Group / Item / Subitem / 상태 / 일정 / 담당 / Update / Reply / Asset 조회.
+금지: Item/상태/담당/일정/Comment/Update/파일 등 모든 Monday Write.
 
 ### Git = REVIEW BEFORE WRITE
-
-Git Read는 QA Context 복원과 Source 조회를 위해 사용할 수 있다.
-
-Git Create / Update / Delete / Commit은 반드시 다음 순서를 따른다.
-
-1. ChatGPT가 변경 초안 또는 Patch를 제시한다.
-2. QA Owner가 최소 1회 내용을 검수한다.
-3. QA Owner가 명시적으로 반영을 승인한다.
-4. 승인된 범위만 ChatGPT가 Git에 반영하고 Commit한다.
-
-QA Owner 승인 없이 Git 내용을 임의로 생성·수정·삭제하지 않는다.
-검수 이후 내용이 변경되면 변경된 범위도 다시 검수 대상으로 본다.
+Git Read는 자유롭게 사용한다.
+Git Create / Update / Delete / Commit은 반드시:
+1. ChatGPT가 변경 초안 또는 Patch 제시
+2. QA Owner가 최소 1회 검수
+3. QA Owner가 명시적으로 승인
+4. 승인된 범위만 반영
+순서를 따른다.
 
 ### Google Drive Test Asset = BOUNDED WRITE
+`QA_ACTIVE.md`의 현재 QA Test Spreadsheet는 QA Owner가 TC / CL / BVT 작성·수정을 요청한 경우에만 Write한다.
 
-`QA_ACTIVE.md`에 지정된 현재 QA Test Spreadsheet는
-QA Owner가 TC / CL / BVT 작성 또는 수정을 요청한 경우 Write할 수 있다.
-
-- 정확한 Spreadsheet Pointer를 사용한다.
-- Workbook 전체를 재생성하지 않는다.
-- 검증된 기존 Sheet를 Shell로 우선 재사용한다.
-- 필요한 Sheet / Range만 수정한다.
-- Write 후 Formula / Summary / Validation / Conditional Format / Merge / Layout을 다시 확인한다.
-- Source 없는 Expected를 사실처럼 추가하지 않는다.
-
+- 정확한 Spreadsheet Pointer 사용
+- Workbook 전체 재생성 금지
+- 기존 검증된 Sheet Shell 우선 재사용
+- 필요한 Sheet / Range만 수정
+- Write 후 Formula / Summary / Validation / Conditional Format / Merge / Layout 재확인
+- Source 없는 Expected 추가 금지
 
 ## 1. Core Boot
 
-1. `QA_BOOT.md`를 읽는다.
-2. `QA_CURRENT.md`를 읽는다.
-3. `QA_ACTIVE.md`를 읽는다.
-4. `QA_ACTIVE.md`의 Current Sprint / Focus / Live Source Pointer를 확인한다.
+QA 업무 시작 또는 현재 상태/이력/Coverage/Expected 판단이 필요하면:
 
-Core Boot 단계에서 모든 Feature / BTS / TC / 기획 내용을 미리 로드하지 않는다.
+1. `QA_BOOT.md`
+2. `QA_CURRENT.md`
+3. `QA_ACTIVE.md`
+4. 현재 업무에 필요한 Live Source
 
-과거 대화와 모델 기억은 검색 방향을 잡기 위한 참고로만 사용할 수 있다.
-현재 상태나 Expected를 확정하는 근거로 사용하지 않는다.
+순으로 읽는다.
 
+과거 대화/모델 기억은 검색 방향 참고용이며 현재 사실이나 Expected 확정 근거로 사용하지 않는다.
 
-## 2. Live Retrieval Rule
+## 2. Live Retrieval Contract
 
-까멜리오의 현재 상태, 과거 QA 이력, Coverage, 변경 영향,
-관련 Issue, Test Case 또는 Expected에 대한 판단이 필요한 경우
-모델 기억이나 과거 대화만으로 답하지 않는다.
+현재 상태, 이력, Coverage, 변경 영향, 관련 Issue, Expected 판단은 관련 Live Source가 있으면 먼저 조회한다.
 
-관련 Source가 존재하면 현재 업무 범위에 필요한 Source를 먼저 LIVE 조회한다.
-
-### Default Live Sources
-
-현재 상태 / 이력 / Coverage Context를 판단할 때 기본적으로 먼저 확인한다.
-
-- Monday Sprint / Feature / Parent / QA Item 및 관련 Update / Reply
+### 기본 Source
+- Monday Sprint / Feature / QA Item 및 Update / Reply
 - Monday 기획서 Item과 최신 Design Asset
-- Monday QA / 버그 보드의 관련 BTS
+- Monday QA / 버그 Board의 관련 BTS
 - Git Test Asset의 기존 Coverage / Open / Recheck Context
 
-### On-demand Test Sources
-
-Google Drive의 Test Case / BVT / Sprint Test는 기본 Boot나
-일반 상태 조회에서 자동으로 읽지 않는다.
-
-다음 경우에만 조회한다.
-
-- QA Owner가 TC / BVT / Sprint Test 조회를 요청한 경우
-- TC 작성 / 수정 / Coverage 비교가 현재 작업의 목적일 경우
-- 실행 가능한 Test Asset 상태가 현재 판단에 필요한 경우
-- Default Live Sources만으로 필요한 Coverage를 판단할 수 없는 경우
-
-Git Test Asset과 모델 기억은 현재 사실을 대신하지 않는다.
-둘의 역할은 필요한 Live Source와 과거 QA Context를 빠르게 찾는 것이다.
+### 필요할 때만
+Google Drive의 TC / BVT / Sprint Test는 다음 경우에만 읽는다.
+- QA Owner가 조회 요청
+- TC/BVT/CL 작성·수정이 목적
+- 실행 가능한 Test Asset 상태가 현재 판단에 필요
+- 기본 Source만으로 Coverage 판단이 불충분
 
 Live Source와 기억이 충돌하면 Live Source를 우선한다.
 
-필요한 Source를 신뢰성 있게 조회하지 못한 경우
-현재 상태나 Expected를 추측해서 완성하지 않고
-HOLD / QUESTION / REVIEW_BLOCKED 등으로 구분한다.
+## 3. Progressive Retrieval
 
+가장 좁고 신뢰도 높은 Pointer부터 시작한다.
 
-## 3. Task Retrieval
-
-사용자가 특정 기능이나 업무를 요청하면 해당 업무를 Retrieval Target으로 잡는다.
-
-예:
-- "메인 로비 어떻게 됐더라?"
-- "오늘 룬, 재능카드, 프로필 QA 할 거야."
-- "이 변경 영향 어디까지야?"
-- "이 기능 TC 보강하자."
-
-이 경우 필요한 범위에서 다음 경로를 따라 현재 Context를 복원한다.
-
-1. Git Test Asset Index에서 관련 Feature Asset 존재 여부 확인
-2. 관련 Monday Sprint / Feature / Parent / QA Item 확인
-3. QA Item의 Update / Reply / 관련 작업 이력 확인
-4. 연결된 Monday 기획서 Item 확인
-5. 해당 기획 Item의 최신 Design Asset 확인
-6. 알려진 Issue ID 및 현재 Feature 관련 BTS 조회
-7. Git Test Asset의 Coverage / Open / Recheck Context와 결합
-8. 현재 요청이 TC / BVT / Sprint Test를 필요로 할 때만 Google Drive 조회
-9. 그 결과를 기준으로 Review / Risk / QUESTION / Coverage / TC 작업 수행
-
-모든 Source를 항상 전부 읽는 것이 목적은 아니다.
-
-현재 판단에 필요한 관련 Source 종류를 빠뜨리지 않으면서,
-업무와 무관한 Context를 불필요하게 로드하지 않는 것을 원칙으로 한다.
-
-
-## 4. Progressive Retrieval Rule
-
-Live Retrieval은 가장 좁고 신뢰도 높은 Pointer부터 시작한다.
-
-1. Last-known ID / 정확한 Pointer
-2. Git Test Asset의 Semantic Anchor / Alias / 관계
-3. Parent / Subitem / Linked Item 탐색
+1. `QA_ACTIVE.md` 또는 정확한 Last-known ID
+2. Git Test Asset의 Semantic Anchor / Alias
+3. Parent / Subitem / Linked Item
 4. 제한된 Board / Source Search
 5. 광역 검색
 
-앞 단계에서 현재 판단에 충분한 근거가 확보되면
-불필요한 Source를 추가로 로드하지 않는다.
+앞 단계에서 충분한 근거가 확보되면 더 넓게 검색하지 않는다.
 
-광역 검색과 문서 전체 Read는 기본 동작이 아니다.
-Pointer 실패, Scope 불명확, Expected 검증 등 필요한 경우에만 수행한다.
+이름 검색은 약칭/띄어쓰기/분류명 차이를 허용하되, 후보가 여러 개면 임의 선택하지 않고 QA Owner에게 Scope를 확인한다.
 
-Last-known Pointer는 빠른 접근을 위한 Cache로 사용한다.
-Pointer가 유효하지 않거나 Source가 이동 / 교체된 경우
-Semantic Anchor와 관계 정보를 이용해 현재 Source를 다시 Resolve한다.
+## 4. Stable Source Map
 
-## 5. Name / Scope Resolution Rule
+- Sprint Board: `18426754095`
+- Design Board: `18413127958`
+- BTS Board: `18427010413`
+- Git Test Assets: `Work/Camelio/TestAssets/`
+- Current QA Spreadsheet: `QA_ACTIVE.md` Pointer 사용
 
-Feature / Item / Design / BTS / Test Asset을 찾을 때
-사용자가 원본 시스템의 정확한 명칭을 입력해야 한다고 가정하지 않는다.
+개별 기획은 현재 Feature/Sprint 일감 → 연결 기획서 Item → 최신 Design Asset 순으로 특정한다.
 
-검색 단계에서는 다음 차이를 허용해 관련 후보를 넓게 찾는다.
+## 5. Source Read State
 
-- 약칭 / 통칭
-- 접두사 / 분류명
-- 띄어쓰기 차이
-- 괄호 및 기호 차이
-- 유사한 기능명
-- Git Test Asset에 등록된 Alias
-- Monday의 Parent / Subitem / 연결 관계
-
-예:
-`로비` → `메인 로비`, `[메인화면] 로비` 등도 검색 후보로 포함한다.
-
-단, 검색 후보가 여러 개이고 현재 요청의 Scope를 하나로 확정할 근거가 부족하면
-이름 유사도, 최신 항목, Sprint 위치 등을 근거로 임의 선택하지 않는다.
-
-가능한 후보와 차이를 짧게 제시하고 QA Owner에게 Scope를 확인한다.
-
-즉:
-- Retrieval은 유연하게 한다.
-- Resolution은 근거가 있을 때만 확정한다.
-- Ambiguous하면 QUESTION 후 진행한다.
-
-후보를 찾은 것과 요청 대상을 확정한 것을 구분한다.
-
-
-## 6. Stable Sources
-
-### Sprint / Work
-- Monday Board: `스프린트`
-- Board ID: `18426754095`
-
-### Design
-- Monday Board: `기획서`
-- Board ID: `18413127958`
-
-개별 기능 기획은 가능한 경우:
-현재 Feature / Sprint 일감
-→ 연결된 기획서 Item
-→ 최신 Design Asset
-
-순으로 특정한다.
-
-기획서 Item에 새 Asset이 갱신될 수 있으므로
-과거 파일의 내용만으로 최신 Expected를 확정하지 않는다.
-
-### BTS
-- Monday Board: `QA / 버그`
-- Board ID: `18427010413`
-
-Feature Asset에 저장된 Issue 번호는 중요한 과거 Regression Pointer다.
-현재 상태와 상세 내용은 BTS에서 LIVE 조회한다.
-
-필요한 경우 저장된 Issue 번호뿐 아니라
-현재 Feature와 관련된 신규 BTS도 함께 검색한다.
-
-### Git Test Assets
-- Repository: `roam1215-beep/QA-study`
-- Path: `Work/Camelio/TestAssets/`
-
-역할:
-Feature별 QA Baseline / Coverage / Open / Recheck Context를
-세션을 넘어 경량으로 유지한다.
-
-Test Asset은 기획서, BTS, Monday Update 또는 Test Case를 복제하지 않는다.
-Test Asset 자체를 새로운 Expected의 근거로 사용하지 않는다.
-
-### Test Case / Execution Docs
-- Google Drive / Google Sheets
-- 현재 Spreadsheet Pointer는 `QA_ACTIVE.md`를 사용한다.
-
-상세 Test Case / BVT / Sprint Test의 정본은 Google Drive에 둔다.
-파일명이 비슷하다는 이유로 다른 Spreadsheet를 임의 선택하지 않는다.
-
-
-## 7. Source Resolution Contract
-
-1. `QA_ACTIVE.md`에 명시된 ID / Pointer가 있으면 우선 사용한다.
-2. Feature Asset의 Last-known Pointer가 유효하면 Fast Path로 사용한다.
-3. Last-known Pointer가 무효이거나 Source가 이동 / 교체된 경우 Semantic Anchor / Alias / 관계로 다시 Resolve한다.
-4. 정확한 Pointer가 있는 Source를 이름 검색 결과로 임의 대체하지 않는다.
-5. Current Sprint / 업무 상태는 Monday LIVE 데이터를 확인한다.
-6. 기능 기획은 연결된 Monday 기획서 Item과 최신 Asset을 우선한다.
-7. 전역 검색에서 찾은 비슷한 문서를 자동으로 Primary Source로 사용하지 않는다.
-8. 최신 Source가 둘 이상이거나 연결이 불명확하면 임의 선택하지 않는다.
-9. Source를 찾은 것과 실제 내용을 읽은 것을 구분한다.
-
-
-## 8. Source Read State
-
-- `LOCATED` — Source / 파일 위치만 확인
-- `FILE_READ` — 실제 파일 접근 성공
+- `LOCATED` — 위치만 확인
+- `FILE_READ` — 파일 접근 성공
 - `CONTENT_READ` — 필요한 내용 실제 Read
-- `VERIFIED` — 이번 판단에 필요한 범위 검토 완료
+- `VERIFIED` — 이번 판단 범위 검토 완료
 - `STALE` — 최신 여부 확인 실패
-- `REVIEW_BLOCKED` — 현재 경로로 신뢰성 있게 검토 불가
+- `REVIEW_BLOCKED` — 신뢰성 있게 검토 불가
 
-`LOCATED` 또는 `FILE_READ`를 `CONTENT_READ`로 표현하지 않는다.
+파일을 찾거나 다운로드한 것만으로 내용을 읽었다고 표현하지 않는다.
 
+## 6. Document Reading Gate
 
-## 9. Document Reading Gate
+포맷에 맞게 필요한 범위만 읽는다.
 
-기획 Asset 사용 전에 포맷 / 구조를 확인한다.
+- XLSX: Sheet → Range → Section/Table
+- HTML: Heading → Section → Table/Data
+- CSV/JSON: Schema → Object/Row group
+- PPTX: Slide → Text/Table/Image 관계
 
-- XLSX: Sheet → 사용 Range → Section / Table / Mechanic
-- HTML: Heading hierarchy → Section → Table / Data 관계
-- CSV / JSON: Schema → Row / Object group → 관련 데이터
-- Native PPTX: Slide → Text / Table / Image 관계
-- Flattened / image-only PPTX: 시각 내용을 안정적으로 읽었을 때만 `CONTENT_READ`
+직접 Read가 신뢰성 있게 되지 않으면 불필요한 변환/OCR을 반복하지 않고 `REVIEW_BLOCKED`로 처리한다.
 
-파일 다운로드 성공만으로 기획 내용을 이해했다고 주장하지 않는다.
-
-직접 Read가 실패하면 불필요한 변환이나 OCR을 반복하지 않는다.
-신뢰성 있게 읽을 수 없으면 `REVIEW_BLOCKED`로 표시한다.
-
-
-## 10. Evidence / Expected Gate
+## 7. Expected Evidence Gate
 
 Expected 근거로 사용할 수 있는 것:
-
-1. 최신 기능 전용 기획서 / 명세
+1. 최신 기능 전용 기획서/명세
 2. 명시적으로 확정된 기획 답변
-3. QA Owner가 확정한 판단
+3. QA Owner 결정
 
-단독으로 Expected 근거가 될 수 없는 것:
-
+단독 근거가 될 수 없는 것:
 - 현재 구현 상태
 - BTS Actual
-- 기존 Test Case
+- 기존 TC
 - Git Test Asset
-- 일반적인 게임 UX
-- ChatGPT 기억
-- AI 추론
+- 일반적 UX
+- 모델 기억/추론
 
-근거가 없으면 QUESTION 또는 HOLD.
+결정되지 않으면 `QUESTION` 또는 `HOLD`.
 
-BTS History와 Test Asset은 Risk / Regression / 과거 Coverage 근거로는 사용할 수 있지만
-새로운 게임 사양을 만드는 근거로 사용하지 않는다.
-
-
-## 11. Stop Rule
+## 8. Stop Rule
 
 조회하지 못한 Source를 LIVE라고 주장하지 않는다.
+존재하지 않는 Issue / Rule / Expected를 만들지 않는다.
+필요한 근거를 확보할 수 없으면 추측을 중단하고 `HOLD / QUESTION / REVIEW_BLOCKED`로 구분한다.
 
-존재하지 않는 Issue / TC / 기획 Rule을 만들어내지 않는다.
+## 9. Git Scope
 
-현재 판단에 필요한 Source나 Expected를 결정할 수 없으면
-추측으로 계속 진행하지 않고 STOP → HOLD / QUESTION / REVIEW_BLOCKED 처리한다.
-
-
-## 12. Git Scope
-
-Git에는 다음을 유지한다.
-
+Git에는 다음만 경량 유지한다.
 - Boot / Source 접근 규칙
 - 현재 QA 운영 기준
-- 현재 Sprint / Live Pointer
+- Current Sprint / Live Pointer
 - Feature별 경량 Test Asset
 - 반복적으로 유효성이 확인된 QA Context
 
 Git에 넣지 않는다.
+- Monday/BTS 전체 Dump
+- TC 전체 복제
+- 기획서 복제
+- 대화 로그
+- 미확정 사양을 사실처럼 정리한 내용
 
-- Monday 전체 Dump
-- BTS 전체 Dump
-- Test Case 전체
-- 기획서 복제본
-- ChatGPT 대화 로그
-- 미확정 사양을 사실처럼 정리한 문서
+Git은 두 번째 Monday / Drive / BTS가 아니다.
 
-Git이 두 번째 Monday / Drive / BTS가 되지 않게 한다.
+## 10. On-demand Support
+
+`Work/Camelio/Support/`는 QA 외 반복 작업을 줄이기 위한 보조 자산이다.
+
+- 일반 QA Boot에서는 읽지 않는다.
+- QA Owner가 관련 작업을 요청한 경우에만 필요한 Support 문서를 추가로 읽는다.
+- Support는 QA Core 규칙이나 Live Source를 대체하지 않는다.
