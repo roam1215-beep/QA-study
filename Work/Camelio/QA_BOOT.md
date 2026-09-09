@@ -33,6 +33,18 @@ Git Create / Update / Delete / Commit은 반드시 다음 순서를 따른다.
 QA Owner 승인 없이 Git 내용을 임의로 생성·수정·삭제하지 않는다.
 검수 이후 내용이 변경되면 변경된 범위도 다시 검수 대상으로 본다.
 
+### Google Drive Test Asset = BOUNDED WRITE
+
+`QA_ACTIVE.md`에 지정된 현재 QA Test Spreadsheet는
+QA Owner가 TC / CL / BVT 작성 또는 수정을 요청한 경우 Write할 수 있다.
+
+- 정확한 Spreadsheet Pointer를 사용한다.
+- Workbook 전체를 재생성하지 않는다.
+- 검증된 기존 Sheet를 Shell로 우선 재사용한다.
+- 필요한 Sheet / Range만 수정한다.
+- Write 후 Formula / Summary / Validation / Conditional Format / Merge / Layout을 다시 확인한다.
+- Source 없는 Expected를 사실처럼 추가하지 않는다.
+
 
 ## 1. Core Boot
 
