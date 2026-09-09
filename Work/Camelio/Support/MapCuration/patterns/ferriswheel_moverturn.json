@@ -1,0 +1,162 @@
+{
+  "id": "qa_ferriswheel_v03",
+  "turnLimit": 10,
+  "ballStartRow": 10,
+  "ballStartCol": 4,
+  "placements": [
+    {
+      "enemyId": "enemy_normal",
+      "row": 12,
+      "col": 0,
+      "hpOverride": 27,
+      "attackOverride": 1,
+      "frictionOverride": 2,
+      "speedDrainMulOverride": 1,
+      "skillResistanceOverride": 0,
+      "monsterStatVersion": 2,
+      "xpDropOverride": 2,
+      "sizeOverride": 80,
+      "turnCountOverride": 3,
+      "startTurnOverride": 3
+    },
+    {
+      "enemyId": "enemy_normal",
+      "row": 11,
+      "col": 0,
+      "hpOverride": 27,
+      "attackOverride": 1,
+      "frictionOverride": 2,
+      "speedDrainMulOverride": 1,
+      "skillResistanceOverride": 0,
+      "monsterStatVersion": 2,
+      "xpDropOverride": 2,
+      "sizeOverride": 80,
+      "turnCountOverride": 3,
+      "startTurnOverride": 3
+    },
+    {
+      "enemyId": "enemy_normal",
+      "row": 12,
+      "col": 1,
+      "hpOverride": 27,
+      "attackOverride": 1,
+      "frictionOverride": 2,
+      "speedDrainMulOverride": 1,
+      "skillResistanceOverride": 0,
+      "monsterStatVersion": 2,
+      "xpDropOverride": 2,
+      "sizeOverride": 80,
+      "turnCountOverride": 3,
+      "startTurnOverride": 3
+    },
+    {
+      "enemyId": "enemy_normal",
+      "row": 11,
+      "col": 1,
+      "hpOverride": 27,
+      "attackOverride": 1,
+      "frictionOverride": 2,
+      "speedDrainMulOverride": 1,
+      "skillResistanceOverride": 0,
+      "monsterStatVersion": 2,
+      "xpDropOverride": 2,
+      "sizeOverride": 80,
+      "turnCountOverride": 3,
+      "startTurnOverride": 3
+    }
+  ],
+  "obstacles": [
+    {
+      "type": "box",
+      "row": 3,
+      "col": 4,
+      "length": 1,
+      "length2": 1,
+      "kind": "moverTurn",
+      "styleId": "moverTurn",
+      "moveMode": "linear",
+      "moveLoop": true,
+      "waypoints": [
+        { "row": 3, "col": 4 },
+        { "row": 4, "col": 6 },
+        { "row": 6, "col": 7 },
+        { "row": 8, "col": 6 },
+        { "row": 9, "col": 4 },
+        { "row": 8, "col": 2 },
+        { "row": 6, "col": 1 },
+        { "row": 4, "col": 2 }
+      ]
+    },
+    {
+      "type": "box",
+      "row": 6,
+      "col": 7,
+      "length": 1,
+      "length2": 1,
+      "kind": "moverTurn",
+      "styleId": "moverTurn",
+      "moveMode": "linear",
+      "moveLoop": true,
+      "waypoints": [
+        { "row": 6, "col": 7 },
+        { "row": 8, "col": 6 },
+        { "row": 9, "col": 4 },
+        { "row": 8, "col": 2 },
+        { "row": 6, "col": 1 },
+        { "row": 4, "col": 2 },
+        { "row": 3, "col": 4 },
+        { "row": 4, "col": 6 }
+      ]
+    },
+    {
+      "type": "box",
+      "row": 9,
+      "col": 4,
+      "length": 1,
+      "length2": 1,
+      "kind": "moverTurn",
+      "styleId": "moverTurn",
+      "moveMode": "linear",
+      "moveLoop": true,
+      "waypoints": [
+        { "row": 9, "col": 4 },
+        { "row": 8, "col": 2 },
+        { "row": 6, "col": 1 },
+        { "row": 4, "col": 2 },
+        { "row": 3, "col": 4 },
+        { "row": 4, "col": 6 },
+        { "row": 6, "col": 7 },
+        { "row": 8, "col": 6 }
+      ]
+    },
+    {
+      "type": "box",
+      "row": 6,
+      "col": 1,
+      "length": 1,
+      "length2": 1,
+      "kind": "moverTurn",
+      "styleId": "moverTurn",
+      "moveMode": "linear",
+      "moveLoop": true,
+      "waypoints": [
+        { "row": 6, "col": 1 },
+        { "row": 4, "col": 2 },
+        { "row": 3, "col": 4 },
+        { "row": 4, "col": 6 },
+        { "row": 6, "col": 7 },
+        { "row": 8, "col": 6 },
+        { "row": 9, "col": 4 },
+        { "row": 8, "col": 2 }
+      ]
+    }
+  ],
+  "_meta": {
+    "curationId": "qa_ferriswheel_v03",
+    "flip": "none",
+    "shift": [0, 0],
+    "genre": "qa",
+    "score": 1,
+    "srcCell": "manual"
+  }
+}
