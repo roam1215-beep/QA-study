@@ -72,16 +72,27 @@ Risk 기준 기본 방향:
 - 구현 규칙 자체를 정식 TC로 만들기보다 실제 사용자 결과와 리스크를 검증한다.
 - 동일 Action이라도 서로 다른 고위험 State Transition을 검증해야 하면 분리할 수 있다.
 
-## 8. 최종 TC 출력 형식
-5열 TSV:
+## 8. TC Review / Execution Format
+
+QA Owner와 내용 검수 단계에서는 기본적으로:
 
 ```text
 대분류 | 중분류 | 사전 조건 | 테스트 내용 | 기대 결과
 ```
 
-- No./결과/이슈번호/비고는 출력하지 않는다.
-- 같은 대분류가 연속되면 첫 행 이후 대분류는 비워도 된다.
-- 셀 내부 줄바꿈은 사용하지 않는다.
+5개 핵심 필드만 사용한다.
+
+실제 Google Sheet 실행 자산에는 기존 Spreadsheet 구조에 따라:
+
+```text
+No. | 대분류 | 중분류 | 사전 조건 | 테스트 내용 | 기대 결과 | 결과 | 이슈번호 | 비고
+```
+
+형태로 구성할 수 있다.
+
+- 같은 대분류가 연속되면 검수용 Draft에서는 첫 행 이후 대분류를 비워도 된다.
+- 셀 내부 강제 줄바꿈은 기본적으로 사용하지 않는다.
+- Sheet 작성 시 기존에 검증된 TC Sheet의 Summary / Formula / Validation / Conditional Format / Merge / Layout을 우선 재사용한다.
 
 ## 9. Golden Examples
 GOOD
@@ -121,10 +132,77 @@ BAD
 - 서로 다른 기능에서 반복되거나 QA Owner가 명시적으로 일반화한 규칙만 CURRENT에 승격한다.
 - 이 문서는 짧게 유지한다. 기능별 사양, Q&A 역사, 개발 상태는 저장하지 않는다.
 
-## 12. 성장 체크
-- **Unsupported Expected** — Source 없는 Expected 생성. 목표 0.
-- **Owner Rewrite** — QA Owner가 산출물을 사실상 다시 써야 하는 정도. 감소해야 한다.
-- **Pre-Build Readiness** — 빌드 전에 Risk/질문/BVT/Sprint Test가 준비되는 정도. 증가해야 한다.
-- **Coverage Ratchet** — 이번 Sprint에서 얻은 중요한 Coverage가 다음 Sprint에서 다시 0부터 시작하지 않는가.
+## 12. Practical Test Asset
 
-복잡한 KPI보다 실제 업무 시간과 검증 품질 개선을 우선한다.
+QA Test Asset의 목적은 완벽하거나 형식적으로 우아한 TC를 만드는 것이 아니다.
+
+우선순위:
+1. 실제 결함 탐지에 도움이 되는 Coverage
+2. 테스트 시 바로 사용할 수 있는 실행성
+3. Regression 시 재사용 가능성
+4. 짧고 관찰 가능한 Expected
+
+TC는 QA의 행동 범위를 제한하는 절차서가 아니라
+필수 Coverage를 놓치지 않기 위한 Backbone으로 사용한다.
+
+QA Owner가 테스트 중 발견한 의심, Edge Case, 복합 조건은
+기존 TC에 없더라도 자유롭게 탐색한다.
+
+반복 가치가 확인되면 이후 TC / CL / Git Coverage에 승격할 수 있다.
+
+## 13. Test Asset Type
+
+- `BVT` — 빌드 기본 생존 및 핵심 진입 검증
+- `TC_[기능]` — 수치, 상태, 경계, 상호작용 등 반복 실행 가치가 높은 검증
+- `CL_[기능]` — 빠르게 훑을 수 있는 UI / Flow / 단순 기능 Checklist
+
+모든 기능을 TC로 만들지 않는다.
+Risk와 반복 실행 가치에 따라 TC / CL을 선택한다.
+
+## 14. Sprint Test Spreadsheet
+
+Google Drive의 QA Test Spreadsheet는 실제 QA 실행 Workspace다.
+
+기본 구성 예:
+- 요약
+- 빌드 스펙
+- BVT
+- TC_[기능]
+- CL_[기능]
+
+Test Spreadsheet는 Sprint 또는 Milestone 단위로 분리할 수 있다.
+
+이전 Spreadsheet는 현재 Sprint의 정본으로 계속 유지하지 않는다.
+새 Sprint에서 필요한 기존 TC / CL만 참고하여 취사 선택하고,
+현재 변경점과 Risk에 맞게 보강한다.
+
+현재 사용 Spreadsheet의 정확한 Pointer는 `QA_ACTIVE.md`에서 관리한다.
+
+## 15. AI-assisted QA Orchestration
+
+QA Owner가 Scope / Expected / Issue 여부 / Release 관련 최종 판단을 담당한다.
+
+AI는 반복 노동과 구조화 비용을 줄여
+QA Owner가 실제 테스트, 의심, Risk 판단에 더 많은 시간을 사용할 수 있도록 보조한다.
+
+현재 주요 활용 범위:
+- Git QA Context 복원
+- Monday / Design / BTS Live Source 조회
+- 기획 구조 및 Risk 정리
+- TC / CL Draft
+- Google Sheet 실행 자산 생성 및 수정
+- 실행 결과 정리
+- QA Update / BTS Draft 보조
+
+중요한 산출물과 의사결정은 QA Owner 검수를 거친다.
+
+다른 AI 모델은 동일 Context를 별도로 유지하는 정본으로 사용하지 않는다.
+복잡한 문서 해석, 코드 작업, 독립 Review 등 명확한 이점이 있을 때 보조적으로 사용할 수 있다.
+
+향후 실제 업무에서 유효성이 확인되는 경우:
+- BTS 등록 보조 / Bulk 처리
+- 자동화 테스트
+- 로그 기반 검증
+- 기획 단계 QA Ideation / Risk Review
+
+등을 점진적으로 추가할 수 있다.
